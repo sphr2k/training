@@ -6,7 +6,7 @@ principles:
   frequency_per_week: 2
   goal: hypertrophy
   priorities:
-    - shoulders
+    - deltoids
     - chest
     - back
   effort:
@@ -18,11 +18,12 @@ principles:
     rule: "Prefer fewer high-quality sets over adding low-value volume. Reduce auxiliary work first if post-session systemic fatigue is excessive."
 
 volume_model:
-  taxonomy: "Kinetic.place muscle groups / target roles"
+  taxonomy: "Everkinetic-inspired primary / secondary muscle targets"
+  source: "https://github.com/everkinetic/data"
+  license: "CC BY-SA 4.0"
   weights:
     primary: 1.0
     secondary: 0.33
-    tertiary: 0.0
 
 patterns:
   horizontal_push:
@@ -30,7 +31,7 @@ patterns:
     targets:
       chest: primary
       triceps: secondary
-      shoulders: secondary
+      anterior_deltoid: secondary
   vertical_pull:
     examples: ["pull-up", "lat pulldown"]
     targets:
@@ -43,13 +44,12 @@ patterns:
       middle_back: primary
       lats: secondary
       biceps: secondary
-      traps: tertiary
+      posterior_deltoid: secondary
   squat:
     examples: ["pendulum squat", "leg press"]
     targets:
       quadriceps: primary
       glutes: secondary
-      hamstrings: tertiary
   hamstring_hinge:
     examples: ["RDL"]
     targets:
@@ -67,11 +67,11 @@ patterns:
   side_delt:
     examples: ["single-arm cable lateral raise"]
     targets:
-      shoulders: primary
+      lateral_deltoid: primary
   rear_delt:
     examples: ["reverse fly"]
     targets:
-      shoulders: primary
+      posterior_deltoid: primary
       middle_back: secondary
   biceps:
     examples: ["incline curl", "cable curl", "Zottman curl"]
