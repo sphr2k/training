@@ -21,8 +21,8 @@ volume_model:
   taxonomy: "Kinetic.place muscle groups / target roles"
   weights:
     primary: 1.0
-    secondary: 0.5
-    tertiary: 0.25
+    secondary: 0.33
+    tertiary: 0.0
 
 patterns:
   horizontal_push:
