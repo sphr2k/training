@@ -16,45 +16,76 @@ principles:
     rule: "Add reps within the target range first; add load once the top of the range is reached with target RIR and stable technique."
   fatigue:
     rule: "Prefer fewer high-quality sets over adding low-value volume. Reduce auxiliary work first if post-session systemic fatigue is excessive."
-  pain:
-    rule: "Exercise selection is flexible. Prefer pain-free variants; do not force movements that provoke shoulder or tendon pain."
+
+volume_model:
+  taxonomy: "Kinetic.place muscle groups / target roles"
+  weights:
+    primary: 1.0
+    secondary: 0.5
+    tertiary: 0.25
 
 patterns:
   horizontal_push:
-    examples: ["chest press", "cable press", "other pain-free press"]
+    examples: ["chest press", "cable press", "machine press"]
+    targets:
+      chest: primary
+      triceps: secondary
+      shoulders: secondary
   vertical_pull:
     examples: ["pull-up", "lat pulldown"]
+    targets:
+      lats: primary
+      biceps: secondary
+      middle_back: secondary
   horizontal_pull:
     examples: ["chest-supported row", "cable row", "machine row"]
+    targets:
+      middle_back: primary
+      lats: secondary
+      biceps: secondary
+      traps: tertiary
   squat:
     examples: ["pendulum squat", "leg press"]
+    targets:
+      quadriceps: primary
+      glutes: secondary
+      hamstrings: tertiary
   hamstring_hinge:
     examples: ["RDL"]
+    targets:
+      hamstrings: primary
+      glutes: primary
+      lower_back: secondary
   hamstring_curl:
     examples: ["seated leg curl", "lying leg curl"]
+    targets:
+      hamstrings: primary
+  leg_extension:
+    examples: ["leg extension"]
+    targets:
+      quadriceps: primary
   side_delt:
     examples: ["single-arm cable lateral raise"]
+    targets:
+      shoulders: primary
   rear_delt:
     examples: ["reverse fly"]
+    targets:
+      shoulders: primary
+      middle_back: secondary
   biceps:
     examples: ["incline curl", "cable curl", "Zottman curl"]
+    targets:
+      biceps: primary
+      forearms: secondary
   triceps:
     examples: ["skullcrusher"]
+    targets:
+      triceps: primary
   abs:
     examples: ["cable crunch"]
-
-weekly_volume:
-  horizontal_push: 6
-  vertical_pull: 6
-  horizontal_pull: 6
-  squat: 6
-  hamstrings: 6
-  leg_extension: 2
-  side_delt: 6
-  rear_delt: 4
-  biceps_direct: 2
-  triceps_direct: 4
-  abs: 4
+    targets:
+      abdominals: primary
 
 sessions:
   A:
@@ -82,7 +113,6 @@ sessions:
     - pattern: biceps
       sets: 1
       reps: "8-15"
-      note: "Keep direct volume conservative because elbow/biceps tendons are the recurring limiter."
     - pattern: triceps
       sets: 2
       reps: "8-15"
@@ -118,7 +148,6 @@ sessions:
     - pattern: biceps
       sets: 1
       reps: "8-15"
-      note: "Keep direct volume conservative because elbow/biceps tendons are the recurring limiter."
     - pattern: triceps
       sets: 2
       reps: "8-15"
@@ -128,5 +157,4 @@ sessions:
 
 notes:
   - "RDL is intentionally once weekly; hamstrings are trained twice via hinge on A and knee flexion on B."
-  - "Squat pattern, horizontal push, vertical pull, horizontal pull and side delts are exposed twice weekly."
   - "Exercise choice may vary inside a pattern without changing the program structure."
