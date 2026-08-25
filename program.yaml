@@ -1,9 +1,10 @@
-version: 1
-name: "2x Full Body Hypertrophy"
+version: 2
+name: "Full Body Hypertrophy"
 source_of_truth: true
 
+default_program: 2d
+
 principles:
-  frequency_per_week: 2
   goal: hypertrophy
   priorities:
     - deltoids
@@ -87,74 +88,174 @@ patterns:
     targets:
       abdominals: primary
 
-sessions:
-  A:
-    - pattern: squat
-      sets: 3
-      reps: "6-12"
-    - pattern: horizontal_push
-      sets: 3
-      reps: "6-12"
-    - pattern: vertical_pull
-      sets: 3
-      reps: "6-12"
-    - pattern: horizontal_pull
-      sets: 3
-      reps: "8-15"
-    - pattern: hamstring_hinge
-      sets: 3
-      reps: "6-12"
-    - pattern: side_delt
-      sets: 3
-      reps: "10-20"
-    - pattern: rear_delt
-      sets: 2
-      reps: "10-20"
-    - pattern: biceps
-      sets: 1
-      reps: "8-15"
-    - pattern: triceps
-      sets: 2
-      reps: "8-15"
-    - pattern: abs
-      sets: 2
-      reps: "8-15"
+programs:
+  2d:
+    label: "2 days"
+    frequency_per_week: 2
+    description: "Two larger full-body sessions with all major patterns exposed across the week."
+    sessions:
+      A:
+        - pattern: squat
+          sets: 3
+          reps: "6-12"
+        - pattern: horizontal_push
+          sets: 3
+          reps: "6-12"
+        - pattern: vertical_pull
+          sets: 3
+          reps: "6-12"
+        - pattern: horizontal_pull
+          sets: 3
+          reps: "8-15"
+        - pattern: hamstring_hinge
+          sets: 3
+          reps: "6-12"
+        - pattern: side_delt
+          sets: 3
+          reps: "10-20"
+        - pattern: rear_delt
+          sets: 2
+          reps: "10-20"
+        - pattern: biceps
+          sets: 1
+          reps: "8-15"
+        - pattern: triceps
+          sets: 2
+          reps: "8-15"
+        - pattern: abs
+          sets: 2
+          reps: "8-15"
+          optional: true
+      B:
+        - pattern: squat
+          sets: 3
+          reps: "6-12"
+        - pattern: horizontal_push
+          sets: 3
+          reps: "6-12"
+        - pattern: vertical_pull
+          sets: 3
+          reps: "6-12"
+        - pattern: horizontal_pull
+          sets: 3
+          reps: "8-15"
+        - pattern: hamstring_curl
+          sets: 3
+          reps: "8-15"
+        - pattern: leg_extension
+          sets: 2
+          reps: "10-20"
+        - pattern: side_delt
+          sets: 3
+          reps: "10-20"
+        - pattern: rear_delt
+          sets: 2
+          reps: "10-20"
+        - pattern: biceps
+          sets: 1
+          reps: "8-15"
+        - pattern: triceps
+          sets: 2
+          reps: "8-15"
 
-  B:
-    - pattern: squat
-      sets: 3
-      reps: "6-12"
-    - pattern: horizontal_push
-      sets: 3
-      reps: "6-12"
-    - pattern: vertical_pull
-      sets: 3
-      reps: "6-12"
-    - pattern: horizontal_pull
-      sets: 3
-      reps: "8-15"
-    - pattern: hamstring_curl
-      sets: 3
-      reps: "8-15"
-    - pattern: leg_extension
-      sets: 2
-      reps: "10-20"
-    - pattern: side_delt
-      sets: 3
-      reps: "10-20"
-    - pattern: rear_delt
-      sets: 2
-      reps: "10-20"
-    - pattern: biceps
-      sets: 1
-      reps: "8-15"
-    - pattern: triceps
-      sets: 2
-      reps: "8-15"
-    - pattern: abs
-      sets: 2
-      reps: "8-15"
+  3d:
+    label: "3 days"
+    frequency_per_week: 3
+    description: "Three shorter full-body sessions with moderately higher weekly volume for chest, back and delts."
+    sessions:
+      A:
+        - pattern: squat
+          sets: 2
+          reps: "6-12"
+        - pattern: horizontal_push
+          sets: 3
+          reps: "6-12"
+        - pattern: vertical_pull
+          sets: 2
+          reps: "6-12"
+        - pattern: horizontal_pull
+          sets: 2
+          reps: "8-15"
+        - pattern: hamstring_hinge
+          sets: 2
+          reps: "6-12"
+        - pattern: side_delt
+          sets: 3
+          reps: "10-20"
+        - pattern: rear_delt
+          sets: 2
+          reps: "10-20"
+        - pattern: biceps
+          sets: 1
+          reps: "8-15"
+        - pattern: triceps
+          sets: 1
+          reps: "8-15"
+      B:
+        - pattern: squat
+          sets: 2
+          reps: "6-12"
+        - pattern: leg_extension
+          sets: 2
+          reps: "10-20"
+        - pattern: horizontal_push
+          sets: 2
+          reps: "6-12"
+        - pattern: vertical_pull
+          sets: 3
+          reps: "6-12"
+        - pattern: horizontal_pull
+          sets: 2
+          reps: "8-15"
+        - pattern: hamstring_curl
+          sets: 2
+          reps: "8-15"
+        - pattern: side_delt
+          sets: 2
+          reps: "10-20"
+        - pattern: rear_delt
+          sets: 1
+          reps: "10-20"
+        - pattern: biceps
+          sets: 1
+          reps: "8-15"
+        - pattern: triceps
+          sets: 1
+          reps: "8-15"
+        - pattern: abs
+          sets: 2
+          reps: "8-15"
+          optional: true
+      C:
+        - pattern: squat
+          sets: 2
+          reps: "6-12"
+        - pattern: horizontal_push
+          sets: 3
+          reps: "6-12"
+        - pattern: vertical_pull
+          sets: 2
+          reps: "6-12"
+        - pattern: horizontal_pull
+          sets: 3
+          reps: "8-15"
+        - pattern: hamstring_curl
+          sets: 2
+          reps: "8-15"
+        - pattern: side_delt
+          sets: 3
+          reps: "10-20"
+        - pattern: rear_delt
+          sets: 2
+          reps: "10-20"
+        - pattern: biceps
+          sets: 1
+          reps: "8-15"
+        - pattern: triceps
+          sets: 1
+          reps: "8-15"
 
 notes:
-  - "RDL is intentionally once weekly; hamstrings are trained twice via hinge on A and knee flexion on B."
+  - "The 3-day variant increases frequency while keeping each individual session shorter than the 2-day variant."
+  - "RDL remains once weekly; hamstrings also receive knee-flexion work through leg curls."
   - "Exercise choice may vary inside a pattern without changing the program structure."
