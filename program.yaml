@@ -1,0 +1,132 @@
+version: 1
+name: "2x Full Body Hypertrophy"
+source_of_truth: true
+
+principles:
+  frequency_per_week: 2
+  goal: hypertrophy
+  priorities:
+    - shoulders
+    - chest
+    - back
+  effort:
+    compounds: "1-3 RIR"
+    isolations: "0-2 RIR"
+  progression:
+    rule: "Add reps within the target range first; add load once the top of the range is reached with target RIR and stable technique."
+  fatigue:
+    rule: "Prefer fewer high-quality sets over adding low-value volume. Reduce auxiliary work first if post-session systemic fatigue is excessive."
+  pain:
+    rule: "Exercise selection is flexible. Prefer pain-free variants; do not force movements that provoke shoulder or tendon pain."
+
+patterns:
+  horizontal_push:
+    examples: ["chest press", "cable press", "other pain-free press"]
+  vertical_pull:
+    examples: ["pull-up", "lat pulldown"]
+  horizontal_pull:
+    examples: ["chest-supported row", "cable row", "machine row"]
+  squat:
+    examples: ["pendulum squat", "leg press"]
+  hamstring_hinge:
+    examples: ["RDL"]
+  hamstring_curl:
+    examples: ["seated leg curl", "lying leg curl"]
+  side_delt:
+    examples: ["single-arm cable lateral raise"]
+  rear_delt:
+    examples: ["reverse fly"]
+  biceps:
+    examples: ["incline curl", "cable curl", "Zottman curl"]
+  triceps:
+    examples: ["skullcrusher"]
+  abs:
+    examples: ["cable crunch"]
+
+weekly_volume:
+  horizontal_push: 6
+  vertical_pull: 6
+  horizontal_pull: 6
+  squat: 6
+  hamstrings: 6
+  leg_extension: 2
+  side_delt: 6
+  rear_delt: 4
+  biceps_direct: 2
+  triceps_direct: 4
+  abs: 4
+
+sessions:
+  A:
+    - pattern: squat
+      sets: 3
+      reps: "6-12"
+    - pattern: horizontal_push
+      sets: 3
+      reps: "6-12"
+    - pattern: vertical_pull
+      sets: 3
+      reps: "6-12"
+    - pattern: horizontal_pull
+      sets: 3
+      reps: "8-15"
+    - pattern: hamstring_hinge
+      sets: 3
+      reps: "6-12"
+    - pattern: side_delt
+      sets: 3
+      reps: "10-20"
+    - pattern: rear_delt
+      sets: 2
+      reps: "10-20"
+    - pattern: biceps
+      sets: 1
+      reps: "8-15"
+      note: "Keep direct volume conservative because elbow/biceps tendons are the recurring limiter."
+    - pattern: triceps
+      sets: 2
+      reps: "8-15"
+    - pattern: abs
+      sets: 2
+      reps: "8-15"
+
+  B:
+    - pattern: squat
+      sets: 3
+      reps: "6-12"
+    - pattern: horizontal_push
+      sets: 3
+      reps: "6-12"
+    - pattern: vertical_pull
+      sets: 3
+      reps: "6-12"
+    - pattern: horizontal_pull
+      sets: 3
+      reps: "8-15"
+    - pattern: hamstring_curl
+      sets: 3
+      reps: "8-15"
+    - pattern: leg_extension
+      sets: 2
+      reps: "10-20"
+    - pattern: side_delt
+      sets: 3
+      reps: "10-20"
+    - pattern: rear_delt
+      sets: 2
+      reps: "10-20"
+    - pattern: biceps
+      sets: 1
+      reps: "8-15"
+      note: "Keep direct volume conservative because elbow/biceps tendons are the recurring limiter."
+    - pattern: triceps
+      sets: 2
+      reps: "8-15"
+    - pattern: abs
+      sets: 2
+      reps: "8-15"
+
+notes:
+  - "RDL is intentionally once weekly; hamstrings are trained twice via hinge on A and knee flexion on B."
+  - "Squat pattern, horizontal push, vertical pull, horizontal pull and side delts are exposed twice weekly."
+  - "Exercise choice may vary inside a pattern without changing the program structure."
