@@ -20,6 +20,13 @@ const muscleLabels = {
   quadriceps: 'Quadriceps', triceps: 'Triceps',
 }
 
+const anatomicalOrder = [
+  'anterior_deltoid', 'lateral_deltoid', 'posterior_deltoid',
+  'chest', 'lats', 'middle_back', 'lower_back',
+  'biceps', 'triceps', 'forearms',
+  'abdominals', 'glutes', 'quadriceps', 'hamstrings',
+]
+
 function calculateMuscleVolume(sessions) {
   const weights = program.volume_model?.weights || { primary: 1, secondary: 0.33 }
   const volume = {}
@@ -39,7 +46,10 @@ function calculateMuscleVolume(sessions) {
     })
   })
 
-  return Object.entries(volume).sort((a, b) => b[1].total - a[1].total)
+  const rank = new Map(anatomicalOrder.map((muscle, index) => [muscle, index]))
+  return Object.entries(volume).sort(([a], [b]) =>
+    (rank.get(a) ?? anatomicalOrder.length) - (rank.get(b) ?? anatomicalOrder.length)
+  )
 }
 
 function formatSets(value) {
