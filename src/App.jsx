@@ -37,7 +37,7 @@ const muscleLabels = {
 }
 
 function calculateMuscleVolume() {
-  const weights = program.volume_model?.weights || { primary: 1, secondary: 0.5, tertiary: 0.25 }
+  const weights = program.volume_model?.weights || { primary: 1, secondary: 0.33, tertiary: 0 }
   const volume = {}
 
   Object.values(program.sessions || {}).flat().forEach((item) => {
@@ -151,7 +151,7 @@ function App() {
             <Separator />
             <div><strong>Fatigue</strong><p>{program.principles.fatigue.rule}</p></div>
             <Separator />
-            <div><strong>Volume model</strong><p>Primary = 1.0, secondary = 0.5, tertiary = 0.25 equivalent sets. Muscle taxonomy follows Kinetic.place.</p></div>
+            <div><strong>Volume model</strong><p>Primary = 1.0, secondary = 0.33, tertiary = 0 equivalent sets. Muscle taxonomy follows Kinetic.place.</p></div>
           </CardContent>
         </Card>
       </div>
