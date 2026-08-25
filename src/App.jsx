@@ -1,9 +1,9 @@
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 import { Dumbbell, Activity, Target, Gauge, ChevronRight } from 'lucide-react'
 import rawProgram from '../program.yaml?raw'
 import { Badge, Card, CardContent, CardHeader, Separator } from './components/ui.jsx'
 
-const program = yaml.load(rawProgram)
+const program = load(rawProgram)
 
 const labels = {
   horizontal_push: 'Horizontal Push',
