@@ -22,13 +22,27 @@ const muscleLabels = {
 function calculateMuscleVolume() {
   const weights = program.volume_model?.weights || { primary: 1, secondary: 0.33 }
   const volume = {}
+
   Object.values(program.sessions || {}).flat().forEach((item) => {
     const targets = program.patterns?.[item.pattern]?.targets || {}
     Object.entries(targets).forEach(([muscle, role]) => {
-      volume[muscle] = (volume[muscle] || 0) + Number(item.sets || 0) * Number(weights[role] || 0)
+      if (!volume[muscle]) volume[muscle] = { primary: 0, secondary: 0, secondaryRaw: 0, total: 0 }
+      const sets = Number(item.sets || 0)
+      const contribution = sets * Number(weights[role] || 0)
+      if (role === 'primary') volume[muscle].primary += contribution
+      if (role === 'secondary') {
+        volume[muscle].secondary += contribution
+        volume[muscle].secondaryRaw += sets
+      }
+      volume[muscle].total += contribution
     })
   })
-  return Object.entries(volume).sort((a, b) => b[1] - a[1])
+
+  return Object.entries(volume).sort((a, b) => b[1].total - a[1].total)
+}
+
+function formatSets(value) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1)
 }
 
 function Session({ name, items }) {
@@ -40,11 +54,13 @@ function Session({ name, items }) {
 
 function App() {
   const volume = calculateMuscleVolume()
-  const maxVolume = Math.max(...volume.map(([, sets]) => sets), 1)
+  const maxVolume = Math.max(...volume.map(([, values]) => values.total), 1)
+  const secondaryWeight = Number(program.volume_model?.weights?.secondary ?? 0.33)
+
   return <main className="page-shell"><div className="ambient ambient-one" /><div className="ambient ambient-two" />
     <header className="hero"><div className="hero-mark"><Dumbbell size={22} /></div><div className="hero-copy"><div className="eyebrow">TRAINING / SOURCE: PROGRAM.YAML</div><h1>{program.name}</h1><p>Pattern-based hypertrophy plan with fixed weekly structure and flexible exercise selection.</p><div className="hero-badges"><Badge><Activity size={14} /> {program.principles.frequency_per_week}× / week</Badge><Badge><Target size={14} /> {program.principles.priorities.join(' · ')}</Badge><Badge><Gauge size={14} /> {program.principles.effort.compounds}</Badge></div></div></header>
     <div className="grid sessions-grid"><Session name="A" items={program.sessions.A} /><Session name="B" items={program.sessions.B} /></div>
-    <div className="grid lower-grid"><Card><CardHeader><div><div className="eyebrow">WEEKLY LOAD</div><h2>Muscle volume</h2></div><Badge>equivalent sets</Badge></CardHeader><CardContent><div className="volume-list">{volume.map(([muscle, sets]) => <div className="volume-row" key={muscle}><span>{muscleLabels[muscle] || muscle.replaceAll('_', ' ')}</span><div className="volume-bar"><i style={{ width: `${(sets / maxVolume) * 100}%` }} /></div><strong>{Number.isInteger(sets) ? sets : sets.toFixed(1)}</strong></div>)}</div></CardContent></Card>
+    <div className="grid lower-grid"><Card><CardHeader><div><div className="eyebrow">WEEKLY LOAD</div><h2>Muscle volume</h2></div><div className="volume-legend"><span><i className="legend-dot primary" />Primary</span><span><i className="legend-dot secondary" />Secondary</span></div></CardHeader><CardContent><div className="volume-list">{volume.map(([muscle, values]) => <div className="volume-item" key={muscle}><div className="volume-row"><span>{muscleLabels[muscle] || muscle.replaceAll('_', ' ')}</span><div className="volume-bar"><i className="volume-primary" style={{ width: `${(values.primary / maxVolume) * 100}%` }} /><i className="volume-secondary" style={{ width: `${(values.secondary / maxVolume) * 100}%` }} /></div><strong>{formatSets(values.total)}</strong></div><div className="volume-breakdown"><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span></div></div>)}</div></CardContent></Card>
       <Card><CardHeader><div><div className="eyebrow">OPERATING RULES</div><h2>Principles</h2></div></CardHeader><CardContent className="principles"><div><strong>Progression</strong><p>{program.principles.progression.rule}</p></div><Separator /><div><strong>Fatigue</strong><p>{program.principles.fatigue.rule}</p></div><Separator /><div><strong>Volume model</strong><p>Primary = 1.0, secondary = 0.33 equivalent sets. Muscle taxonomy is Everkinetic-inspired with granular deltoid heads.</p></div></CardContent></Card></div>
     <footer><span>Generated directly from <code>program.yaml</code>.</span><span>Exercise metadata model based on Everkinetic, CC BY-SA 4.0.</span></footer>
   </main>
