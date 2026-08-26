@@ -3,13 +3,15 @@ import { cn } from '../lib/utils.js'
 
 export const Popover = PopoverPrimitive.Root
 export const PopoverTrigger = PopoverPrimitive.Trigger
+export const PopoverClose = PopoverPrimitive.Close
 
-export function PopoverContent({ className, align = 'center', sideOffset = 8, ...props }) {
+export function PopoverContent({ className, align = 'center', sideOffset = 8, collisionPadding = 12, ...props }) {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Content
         align={align}
         sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
         className={cn('popover-content', className)}
         {...props}
       />
