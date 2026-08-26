@@ -45,21 +45,23 @@ const anatomeMuscles = {
   hamstrings: { view: 'back', slugs: ['hamstring'] },
 }
 
-function MuscleDiagram({ muscle }) {
+function muscleImageUrl(muscle, width = 180, height = 240) {
   const config = anatomeMuscles[muscle]
   if (!config) return null
   const params = new URLSearchParams({
-    gender: 'male',
-    view: config.view,
-    layers: `38BDF8:${config.slugs.join(',')}`,
-    width: '180',
-    height: '240',
-    body_color: '#24242a',
-    border_color: '#52525b',
-    background: 'transparent',
-    output: 'raw',
+    gender: 'male', view: config.view, layers: `38BDF8:${config.slugs.join(',')}`,
+    width: String(width), height: String(height), body_color: '#24242a', border_color: '#52525b',
+    background: 'transparent', output: 'raw',
   })
-  return <img className="muscle-diagram" src={`https://api.anatome.dev/generateImage?${params.toString()}`} alt="" loading="lazy" />
+  return `https://api.anatome.dev/generateImage?${params.toString()}`
+}
+
+function MuscleDiagram({ muscle, interactive = false }) {
+  const src = muscleImageUrl(muscle)
+  if (!src) return null
+  const image = <img className="muscle-diagram" src={src} alt="" loading="lazy" />
+  if (!interactive) return image
+  return <Popover><PopoverTrigger asChild><button type="button" className="muscle-diagram-button" aria-label={`Enlarge ${muscleLabels[muscle] || muscle} anatomy`}>{image}</button></PopoverTrigger><PopoverContent className="anatomy-popover" align="start"><div className="eyebrow">ANATOMY</div><h3>{muscleLabels[muscle] || muscle}</h3><img className="muscle-diagram-large" src={muscleImageUrl(muscle, 420, 560)} alt={`${muscleLabels[muscle] || muscle} highlighted`} /></PopoverContent></Popover>
 }
 
 function calculateMuscleVolume(sessions, secondaryWeight) {
@@ -75,14 +77,7 @@ function calculateMuscleVolume(sessions, secondaryWeight) {
         if (role === 'primary') volume[muscle].primary += contribution
         if (role === 'secondary') { volume[muscle].secondary += contribution; volume[muscle].secondaryRaw += sets }
         volume[muscle].total += contribution
-        volume[muscle].sources.push({
-          session,
-          pattern: item.pattern,
-          exercises: pattern.examples || [],
-          role,
-          sets,
-          contribution,
-        })
+        volume[muscle].sources.push({ session, pattern: item.pattern, exercises: pattern.examples || [], role, sets, contribution })
       })
     })
   })
@@ -93,7 +88,7 @@ function calculateMuscleVolume(sessions, secondaryWeight) {
 function formatSets(value) { return Number.isInteger(value) ? String(value) : value.toFixed(1) }
 
 function VolumeDetails({ muscle, values, secondaryWeight }) {
-  return <Popover><PopoverTrigger asChild><button type="button" className="volume-breakdown" aria-label={`Show ${muscleLabels[muscle] || muscle} volume details`}><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span><Info size={13} /></button></PopoverTrigger><PopoverContent align="start" className="volume-popover">
+  return <Popover><PopoverTrigger asChild><button type="button" className="volume-breakdown" aria-label={`Show ${muscleLabels[muscle] || muscle} volume details`}><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text"><span className="desktop-secondary">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span><span className="mobile-secondary">{formatSets(values.secondary)} secondary</span></span><Info size={13} /></button></PopoverTrigger><PopoverContent align="start" className="volume-popover">
     <div className="popover-heading"><MuscleDiagram muscle={muscle} /><div><div className="eyebrow">VOLUME BREAKDOWN</div><h3>{muscleLabels[muscle] || muscle}</h3></div></div>
     <p className="popover-summary">{formatSets(values.total)} equivalent sets = {formatSets(values.primary)} primary + {formatSets(values.secondary)} secondary.</p>
     <div className="source-list">{values.sources.map((source, index) => <div className="source-row" key={`${source.session}-${source.pattern}-${source.role}-${index}`}><div className="source-main"><div className="source-title"><strong>{source.exercises.join(' / ') || labels[source.pattern] || source.pattern}</strong><span>Session {source.session} · {source.role}</span></div><small>{labels[source.pattern] || source.pattern}</small></div><div className={source.role === 'primary' ? 'primary-text' : 'secondary-text'}>{source.sets} sets → {formatSets(source.contribution)} eq</div></div>)}</div>
@@ -118,8 +113,7 @@ function App() {
   return <main className="page-shell"><div className="ambient ambient-one" /><div className="ambient ambient-two" />
     <header className="hero"><div className="hero-mark"><Dumbbell size={22} /></div><div className="hero-copy"><div className="hero-topline"><div className="eyebrow">TRAINING / SOURCE: PROGRAM.YAML</div><div className="program-switch" role="group" aria-label="Training frequency">{Object.entries(program.programs).map(([key, variant]) => <button key={key} type="button" className={key === programKey ? 'active' : ''} onClick={() => setProgramKey(key)}>{variant.label}</button>)}</div></div><h1>{program.name}</h1><p>{selected.description}</p><div className="hero-badges"><Badge><Activity size={14} /> {selected.frequency_per_week}× / week</Badge><Badge><Target size={14} /> {program.principles.priorities.join(' · ')}</Badge><Badge><Gauge size={14} /> {program.principles.effort.compounds}</Badge></div></div></header>
     <div className="grid sessions-grid">{Object.entries(selected.sessions).map(([name, items]) => <Session key={name} name={name} items={items} />)}</div>
-    <div className="grid lower-grid"><Card><CardHeader><div><div className="eyebrow">WEEKLY LOAD</div><h2>Muscle volume</h2></div><div className="volume-controls"><div className="volume-legend"><span><i className="legend-dot primary" />Primary</span><span><i className="legend-dot secondary" />Secondary</span></div><label className="weight-select"><span>Secondary</span><select value={secondaryWeight} onChange={(event) => setSecondaryWeight(Number(event.target.value))}><option value="0.33">× 0.33</option><option value="0.5">× 0.5</option></select></label></div></CardHeader><CardContent><div className="volume-list">{volume.map(([muscle, values]) => <div className="volume-item" key={muscle}><div className="volume-row"><span className="muscle-name"><MuscleDiagram muscle={muscle} />{muscleLabels[muscle] || muscle.replaceAll('_', ' ')}</span><div className="volume-bar"><i className="volume-primary" style={{ width: `${(values.primary / maxVolume) * 100}%` }} /><i className="volume-secondary" style={{ width: `${(values.secondary / maxVolume) * 100}%` }} /></div><strong>{formatSets(values.total)}</strong></div><VolumeDetails muscle={muscle} values={values} secondaryWeight={secondaryWeight} /></div>)}</div></CardContent></Card>
-      <Card><CardHeader><div><div className="eyebrow">OPERATING RULES</div><h2>Principles</h2></div></CardHeader><CardContent className="principles"><div><strong>Progression</strong><p>{program.principles.progression.rule}</p></div><Separator /><div><strong>Fatigue</strong><p>{program.principles.fatigue.rule}</p></div><Separator /><div><strong>Volume model</strong><p>Primary = 1.0, secondary = {secondaryWeight} equivalent sets. Optional work is excluded from the volume totals.</p></div></CardContent></Card></div>
+    <div className="grid volume-grid"><Card><CardHeader><div><div className="eyebrow">WEEKLY LOAD</div><h2>Muscle volume</h2></div><div className="volume-controls"><div className="volume-legend"><span><i className="legend-dot primary" />Primary</span><span><i className="legend-dot secondary" />Secondary</span></div><label className="weight-select"><span>Secondary</span><select value={secondaryWeight} onChange={(event) => setSecondaryWeight(Number(event.target.value))}><option value="0.33">× 0.33</option><option value="0.5">× 0.5</option></select></label></div></CardHeader><CardContent><div className="volume-list">{volume.map(([muscle, values]) => <div className="volume-item" key={muscle}><div className="volume-row"><span className="muscle-name"><MuscleDiagram muscle={muscle} interactive />{muscleLabels[muscle] || muscle.replaceAll('_', ' ')}</span><div className="volume-bar"><i className="volume-primary" style={{ width: `${(values.primary / maxVolume) * 100}%` }} /><i className="volume-secondary" style={{ width: `${(values.secondary / maxVolume) * 100}%` }} /></div><strong>{formatSets(values.total)}</strong></div><VolumeDetails muscle={muscle} values={values} secondaryWeight={secondaryWeight} /></div>)}</div></CardContent></Card></div>
     <footer><span>Generated directly from <code>program.yaml</code>.</span><span>Exercise metadata: Everkinetic · anatomy diagrams: Anatome.</span></footer>
   </main>
 }
