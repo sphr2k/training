@@ -24,7 +24,7 @@ volume_model:
   license: "CC BY-SA 4.0"
   weights:
     primary: 1.0
-    secondary: 0.33
+    secondary: 0.5
 
 patterns:
   horizontal_push:
