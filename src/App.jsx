@@ -67,6 +67,10 @@ function calculateMuscleVolume(sessions, secondaryWeight) {
       })
     })
   })
+  Object.values(volume).forEach((values) => values.sources.sort((a, b) => {
+    if (a.role !== b.role) return a.role === 'primary' ? -1 : 1
+    return String(a.session).localeCompare(String(b.session))
+  }))
   const rank = new Map(anatomicalOrder.map((muscle, index) => [muscle, index]))
   return Object.entries(volume).sort(([a], [b]) => (rank.get(a) ?? anatomicalOrder.length) - (rank.get(b) ?? anatomicalOrder.length))
 }
@@ -94,7 +98,7 @@ function Session({ name, items }) {
 
 function App() {
   const [programKey, setProgramKey] = useState(program.default_program || '2d')
-  const [secondaryWeight, setSecondaryWeight] = useState(Number(program.volume_model?.weights?.secondary ?? 0.33))
+  const [secondaryWeight, setSecondaryWeight] = useState(Number(program.volume_model?.weights?.secondary ?? 0.5))
   const selected = program.programs[programKey]
   const volume = calculateMuscleVolume(selected.sessions, secondaryWeight)
   const maxVolume = Math.max(...volume.map(([, values]) => values.total), 1)
