@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "latest",
     "@radix-ui/react-popover": "latest",
     "@vitejs/plugin-react": "latest",
     "class-variance-authority": "latest",
