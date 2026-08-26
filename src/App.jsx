@@ -29,32 +29,61 @@ const anatomicalOrder = [
 ]
 
 const anatomeMuscles = {
-  anterior_deltoid: { side: 'front', slugs: ['deltoids'] }, lateral_deltoid: { side: 'front', slugs: ['deltoids'] }, posterior_deltoid: { side: 'back', slugs: ['deltoids'] },
-  chest: { side: 'front', slugs: ['chest'] }, lats: { side: 'back', slugs: ['lats'] }, middle_back: { side: 'back', slugs: ['traps', 'rhomboids'] }, lower_back: { side: 'back', slugs: ['lower-back'] },
-  biceps: { side: 'front', slugs: ['biceps'] }, triceps: { side: 'back', slugs: ['triceps'] }, forearms: { side: 'front', slugs: ['forearms'] },
-  abdominals: { side: 'front', slugs: ['abs'] }, glutes: { side: 'back', slugs: ['glutes'] }, quadriceps: { side: 'front', slugs: ['quadriceps'] }, hamstrings: { side: 'back', slugs: ['hamstrings'] },
+  anterior_deltoid: { view: 'front', slugs: ['deltoids'] },
+  lateral_deltoid: { view: 'front', slugs: ['deltoids'] },
+  posterior_deltoid: { view: 'back', slugs: ['deltoids'] },
+  chest: { view: 'front', slugs: ['chest'] },
+  lats: { view: 'back', slugs: ['upper-back'] },
+  middle_back: { view: 'back', slugs: ['trapezius', 'upper-back'] },
+  lower_back: { view: 'back', slugs: ['lower-back'] },
+  biceps: { view: 'front', slugs: ['biceps'] },
+  triceps: { view: 'back', slugs: ['triceps'] },
+  forearms: { view: 'front', slugs: ['forearm'] },
+  abdominals: { view: 'front', slugs: ['abs'] },
+  glutes: { view: 'back', slugs: ['gluteal'] },
+  quadriceps: { view: 'front', slugs: ['quadriceps'] },
+  hamstrings: { view: 'back', slugs: ['hamstring'] },
 }
 
 function MuscleDiagram({ muscle }) {
   const config = anatomeMuscles[muscle]
   if (!config) return null
-  const params = new URLSearchParams({ gender: 'male', side: config.side, muscles: config.slugs.join(','), primary: '#38bdf8', secondary: '#a78bfa' })
-  return <img className="muscle-diagram" src={`https://api.anatome.dev/generateImage?${params}`} alt="" loading="lazy" />
+  const params = new URLSearchParams({
+    gender: 'male',
+    view: config.view,
+    layers: `38BDF8:${config.slugs.join(',')}`,
+    width: '180',
+    height: '240',
+    body_color: '#24242a',
+    border_color: '#52525b',
+    background: 'transparent',
+    output: 'raw',
+  })
+  return <img className="muscle-diagram" src={`https://api.anatome.dev/generateImage?${params.toString()}`} alt="" loading="lazy" />
 }
 
 function calculateMuscleVolume(sessions, secondaryWeight) {
   const volume = {}
-  Object.values(sessions || {}).flat().filter((item) => !item.optional).forEach((item) => {
-    const targets = program.patterns?.[item.pattern]?.targets || {}
-    Object.entries(targets).forEach(([muscle, role]) => {
-      if (!volume[muscle]) volume[muscle] = { primary: 0, secondary: 0, secondaryRaw: 0, total: 0, sources: [] }
-      const sets = Number(item.sets || 0)
-      const weight = role === 'primary' ? 1 : role === 'secondary' ? secondaryWeight : 0
-      const contribution = sets * weight
-      if (role === 'primary') volume[muscle].primary += contribution
-      if (role === 'secondary') { volume[muscle].secondary += contribution; volume[muscle].secondaryRaw += sets }
-      volume[muscle].total += contribution
-      volume[muscle].sources.push({ pattern: item.pattern, role, sets, contribution })
+  Object.entries(sessions || {}).forEach(([session, items]) => {
+    items.filter((item) => !item.optional).forEach((item) => {
+      const pattern = program.patterns?.[item.pattern] || {}
+      Object.entries(pattern.targets || {}).forEach(([muscle, role]) => {
+        if (!volume[muscle]) volume[muscle] = { primary: 0, secondary: 0, secondaryRaw: 0, total: 0, sources: [] }
+        const sets = Number(item.sets || 0)
+        const weight = role === 'primary' ? 1 : role === 'secondary' ? secondaryWeight : 0
+        const contribution = sets * weight
+        if (role === 'primary') volume[muscle].primary += contribution
+        if (role === 'secondary') { volume[muscle].secondary += contribution; volume[muscle].secondaryRaw += sets }
+        volume[muscle].total += contribution
+        volume[muscle].sources.push({
+          session,
+          pattern: item.pattern,
+          exercises: pattern.examples || [],
+          role,
+          sets,
+          contribution,
+        })
+      })
     })
   })
   const rank = new Map(anatomicalOrder.map((muscle, index) => [muscle, index]))
@@ -67,7 +96,7 @@ function VolumeDetails({ muscle, values, secondaryWeight }) {
   return <Popover><PopoverTrigger asChild><button type="button" className="volume-breakdown" aria-label={`Show ${muscleLabels[muscle] || muscle} volume details`}><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span><Info size={13} /></button></PopoverTrigger><PopoverContent align="start" className="volume-popover">
     <div className="popover-heading"><MuscleDiagram muscle={muscle} /><div><div className="eyebrow">VOLUME BREAKDOWN</div><h3>{muscleLabels[muscle] || muscle}</h3></div></div>
     <p className="popover-summary">{formatSets(values.total)} equivalent sets = {formatSets(values.primary)} primary + {formatSets(values.secondary)} secondary.</p>
-    <div className="source-list">{values.sources.map((source, index) => <div className="source-row" key={`${source.pattern}-${source.role}-${index}`}><div><strong>{labels[source.pattern] || source.pattern}</strong><span>{source.role}</span></div><div className={source.role === 'primary' ? 'primary-text' : 'secondary-text'}>{source.sets} sets → {formatSets(source.contribution)} eq</div></div>)}</div>
+    <div className="source-list">{values.sources.map((source, index) => <div className="source-row" key={`${source.session}-${source.pattern}-${source.role}-${index}`}><div className="source-main"><div className="source-title"><strong>{source.exercises.join(' / ') || labels[source.pattern] || source.pattern}</strong><span>Session {source.session} · {source.role}</span></div><small>{labels[source.pattern] || source.pattern}</small></div><div className={source.role === 'primary' ? 'primary-text' : 'secondary-text'}>{source.sets} sets → {formatSets(source.contribution)} eq</div></div>)}</div>
     <Separator />
     <div className="popover-formula"><strong>Formula</strong><span>Primary × 1.0 + Secondary × {secondaryWeight}</span></div>
   </PopoverContent></Popover>
