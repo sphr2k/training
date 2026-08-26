@@ -61,7 +61,7 @@ function MuscleDiagram({ muscle, interactive = false }) {
   if (!src) return null
   const image = <img className="muscle-diagram" src={src} alt="" loading="lazy" />
   if (!interactive) return image
-  return <Popover><PopoverTrigger asChild><button type="button" className="muscle-diagram-button" aria-label={`Enlarge ${muscleLabels[muscle] || muscle} anatomy`}>{image}</button></PopoverTrigger><PopoverContent className="anatomy-popover" align="start"><div className="eyebrow">ANATOMY</div><h3>{muscleLabels[muscle] || muscle}</h3><img className="muscle-diagram-large" src={muscleImageUrl(muscle, 420, 560)} alt={`${muscleLabels[muscle] || muscle} highlighted`} /></PopoverContent></Popover>
+  return <Popover><PopoverTrigger asChild><button type="button" className="muscle-diagram-button" aria-label={`Enlarge ${muscleLabels[muscle] || muscle} anatomy`}>{image}</button></PopoverTrigger><PopoverContent className="anatomy-popover" align="start"><div className="eyebrow">ANATOMY</div><h3>{muscleLabels[muscle] || muscle}</h3><img className="muscle-diagram-large" src={muscleImageUrl(muscle, 280, 370)} alt={`${muscleLabels[muscle] || muscle} highlighted`} /></PopoverContent></Popover>
 }
 
 function calculateMuscleVolume(sessions, secondaryWeight) {
@@ -85,10 +85,13 @@ function calculateMuscleVolume(sessions, secondaryWeight) {
   return Object.entries(volume).sort(([a], [b]) => (rank.get(a) ?? anatomicalOrder.length) - (rank.get(b) ?? anatomicalOrder.length))
 }
 
-function formatSets(value) { return Number.isInteger(value) ? String(value) : value.toFixed(1) }
+function formatSets(value) {
+  const rounded = Math.round(Number(value) * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
 
 function VolumeDetails({ muscle, values, secondaryWeight }) {
-  return <Popover><PopoverTrigger asChild><button type="button" className="volume-breakdown" aria-label={`Show ${muscleLabels[muscle] || muscle} volume details`}><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text"><span className="desktop-secondary">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span><span className="mobile-secondary">{formatSets(values.secondary)} secondary</span></span><Info size={13} /></button></PopoverTrigger><PopoverContent align="start" className="volume-popover">
+  return <Popover><PopoverTrigger asChild><button type="button" className="volume-breakdown" aria-label={`Show ${muscleLabels[muscle] || muscle} volume details`}><span className="primary-text">{formatSets(values.primary)} primary</span><span>+</span><span className="secondary-text"><span className="secondary-long">{formatSets(values.secondary)} secondary eq ({formatSets(values.secondaryRaw)} × {secondaryWeight})</span><span className="secondary-short">{formatSets(values.secondary)} secondary</span></span><Info size={13} /></button></PopoverTrigger><PopoverContent align="start" className="volume-popover">
     <div className="popover-heading"><MuscleDiagram muscle={muscle} /><div><div className="eyebrow">VOLUME BREAKDOWN</div><h3>{muscleLabels[muscle] || muscle}</h3></div></div>
     <p className="popover-summary">{formatSets(values.total)} equivalent sets = {formatSets(values.primary)} primary + {formatSets(values.secondary)} secondary.</p>
     <div className="source-list">{values.sources.map((source, index) => <div className="source-row" key={`${source.session}-${source.pattern}-${source.role}-${index}`}><div className="source-main"><div className="source-title"><strong>{source.exercises.join(' / ') || labels[source.pattern] || source.pattern}</strong><span>Session {source.session} · {source.role}</span></div><small>{labels[source.pattern] || source.pattern}</small></div><div className={source.role === 'primary' ? 'primary-text' : 'secondary-text'}>{source.sets} sets → {formatSets(source.contribution)} eq</div></div>)}</div>
