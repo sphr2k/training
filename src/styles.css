@@ -91,11 +91,14 @@ button, input, textarea, select { font: inherit; }
 .volume-breakdown { display: flex; gap: 6px; align-items: center; padding-left: 157px; color: #52525b; font-size: .68rem; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .primary-text { color: #7dd3fc; }
 .secondary-text { color: #c4b5fd; }
+.volume-controls { display: flex; align-items: center; justify-content: flex-end; gap: 14px; flex-wrap: wrap; }
 .volume-legend { display: flex; gap: 12px; flex-wrap: wrap; color: #71717a; font-size: .72rem; }
 .volume-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend-dot { width: 8px; height: 8px; border-radius: 999px; display: inline-block; }
 .legend-dot.primary { background: #38bdf8; }
 .legend-dot.secondary { background: #a78bfa; }
+.weight-select { display: inline-flex; align-items: center; gap: 6px; color: #71717a; font-size: .68rem; }
+.weight-select select { appearance: auto; min-height: 28px; padding: 3px 7px; border: 1px solid #303036; border-radius: 8px; background: #18181b; color: #d4d4d8; font-size: .72rem; font-weight: 700; cursor: pointer; }
 
 .principles { display: grid; gap: 16px; }
 .principles strong { font-size: .84rem; }
@@ -121,6 +124,7 @@ code { color: #a1a1aa; }
   .exercise-meta { max-width: 220px; }
   .volume-row { grid-template-columns: 110px 1fr 30px; gap: 8px; }
   .volume-breakdown { padding-left: 118px; flex-wrap: wrap; }
-  .volume-legend { width: 100%; }
+  .volume-controls { width: 100%; justify-content: space-between; }
+  .volume-legend { flex: 1; }
   footer { flex-direction: column; }
 }
